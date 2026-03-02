@@ -1,7 +1,5 @@
 # 🛒 Retail Marketing Strategy & RFM Customer Segmentation | Python
 
-![Customer Segmentation Banner](image)
-
 **Author:** Van Bat Phuc Tai  
 **Tools Used:** Python (Pandas, NumPy, Matplotlib, Seaborn)
 
@@ -24,9 +22,9 @@
 
 ### 📖 What is this project about?
 
-The **Marketing team** aims to launch **personalized campaigns** for **customer retention and acquisition** during peak sales periods. However, with a dataset exceeding **500,000+ transactions**, manual segmentation is no longer feasible.
+The **Marketing team** aims to launch **personalized campaigns** for **customer retention and acquisition** during peak sales periods. However, with a dataset exceeding **540,000+ transactions**, manual segmentation is no longer feasible.
 
-To address this challenge, the **RFM model (Recency, Frequency, Monetary)** is applied using **Python** to systematically classify customers based on purchasing behavior.
+To address this challenge, the **RFM model (Recency, Frequency, Monetary)** is applied using **Python (Google Colab)** to systematically classify customers based on purchasing behavior.
 
 This project covers:
 
