@@ -5,22 +5,22 @@
 
 ---
 
-# 📑 Table of Contents
+## 📑 Table of Contents
 
-- 📌 [1. Background & Overview](#-1-background--overview)  
-- 📂 [2. Dataset Description & Data Structure](#-2-dataset-description--data-structure)  
-- 🧹 [3. Data Cleaning & Preprocessing](#-3-data-cleaning--preprocessing)  
-- 🔍 [4. Exploratory Data Analysis (EDA)](#-4-exploratory-data-analysis-eda)  
-- 🧮 [5. Apply RFM Model](#-5-apply-rfm-model)  
-- 📊 [6. Visualization & Analysis](#-6-visualization--analysis)  
-- 💡 [7. Insight & Recommendation](#-7-insight--recommendation)  
+- 📌 [Background & Overview](#-background--overview)  
+- 📂 [Dataset Description & Data Structure](#-dataset-description--data-structure)  
+- 🧹 [Data Cleaning & Preprocessing](#-data-cleaning--preprocessing)  
+- 🔍 [Exploratory Data Analysis (EDA)](#-exploratory-data-analysis-eda)  
+- 🧮 [Apply RFM Model](#-apply-rfm-model)  
+- 📊 [Visualization & Analysis](#-visualization--analysis)  
+- 💡 [Insight & Recommendation](#-insight--recommendation)  
 ---
 
-# 1️⃣ 📌 Background & Overview
+## 📌 Background & Overview
 
-## 🎯 Objective
+### 🎯 Objective
 
-### 📖 What is this project about?
+#### 📖 What is this project about?
 
 The **Marketing team** aims to launch **personalized campaigns** for **customer retention and acquisition** during peak sales periods. However, with a dataset exceeding **540,000+ transactions**, manual segmentation is no longer feasible.
 
@@ -36,7 +36,7 @@ This project covers:
 
 ---
 
-### 👤 Who is this project for?
+#### 👤 Who is this project for?
 
 ✔️ **Marketing Department**  
 ✔️ **Sales Team**  
@@ -44,7 +44,7 @@ This project covers:
 
 ---
 
-## ❓ Business Questions
+### ❓ Business Questions
 
 - How can we **segment customers effectively** using the RFM model?  
 - Which customer groups should be **prioritized for retention and promotional campaigns**?  
@@ -53,7 +53,7 @@ This project covers:
 
 ---
 
-## 🔎 RFM Analysis Overview
+### 🔎 RFM Analysis Overview
 
 ### Why use RFM?
 
@@ -74,9 +74,9 @@ By applying RFM, businesses can:
 
 ---
 
-# 2️⃣ 📂 Dataset Description & Data Structure
+## 📂 Dataset Description & Data Structure
 
-## 📌 Data Source
+### 📌 Data Source
 
 - **Source:** E-commerce Retail Dataset  
 - **Size:** 541,910 rows × 8 columns  
@@ -86,7 +86,7 @@ By applying RFM, businesses can:
 
 ## 📂 Data Structure & Relationships
 
-### 1. Tables Used
+#### 1. Tables Used
 
 The dataset consists of two sheets:
 
@@ -96,11 +96,11 @@ The dataset consists of two sheets:
 
 ---
 
-### 2. Table Schema & Data Snapshot
+#### 2. Table Schema & Data Snapshot
 
 #### 📌 Sheet 1: E-commerce Retail
 
-### 📋 Table Schema: E-commerce Retail
+#### 📋 Table Schema: E-commerce Retail
 
 <details>
 <summary>📂 **Dataset Schema** (Click to expand)</summary>
@@ -124,7 +124,7 @@ The dataset consists of two sheets:
 
 #### 📌 Sheet 2: Customer Segmentation
 
-### 📊 Customer Segmentation & RFM Scores
+#### 📊 Customer Segmentation & RFM Scores
 
 <details>
 <summary>📊 **RFM Segmentation Mapping** (Click to expand)</summary>
@@ -149,7 +149,7 @@ The dataset consists of two sheets:
 
 ---
 
-# 3️⃣ 🧹 Data Cleaning & Preprocessing
+# 🧹 Data Cleaning & Preprocessing
 
 [In 1]:
 
@@ -163,6 +163,27 @@ ecommerce_retail.head()
 <img width="900" alt="image" src="https://github.com/user-attachments/assets/85cf956e-5536-4c99-b8fe-0970bd4aa482" />
 
 ---
+
+[In 2]:
+
+```python
+# Check the general information of df
+ecommerce_retail.info()
+```
+
+[Out 2]:
+
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/b724fbd1-8851-489a-8c62-d13f17f80f66" />
+
+[In 3]:
+
+```python
+# Check Data Summary
+ecommerce_retail.describe()
+```
+
+[Out 3]:
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/6c971e43-3b87-49ca-8e03-995a74a74e46" />
 
 ## 📌 Clean Dataset Outcome
 
