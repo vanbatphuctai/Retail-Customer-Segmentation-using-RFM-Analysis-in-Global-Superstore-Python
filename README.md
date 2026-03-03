@@ -151,26 +151,16 @@ The dataset consists of two sheets:
 
 # 3️⃣ 🧹 Data Cleaning & Preprocessing
 
-Before applying RFM, the dataset underwent several cleaning steps:
+[In 1]:
 
-### ✅ 1. Handle Missing Values
-- Removed records with missing **CustomerID**
-- Checked null values in key transaction fields
+```python
+# Print the first five rows of the dataset
+ecommerce_retail.head()
+```
 
-### ✅ 2. Remove Duplicates
-- Dropped duplicated transaction records
+[Out 1]:
 
-### ✅ 3. Handle Invalid Transactions
-- Removed negative quantities (returned/cancelled orders)
-- Filtered out zero or negative unit prices
-
-### ✅ 4. Convert Data Types
-- Converted `InvoiceDate` to datetime format
-- Ensured numeric columns are correctly typed
-
-### ✅ 5. Create Derived Metrics
-- Calculated **TotalRevenue = Quantity × UnitPrice**
-- Determined **Snapshot Date** for Recency calculation
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/85cf956e-5536-4c99-b8fe-0970bd4aa482" />
 
 ---
 
