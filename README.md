@@ -183,12 +183,293 @@ ecommerce_retail.describe()
 ```
 
 [Out 3]:
-<img width="900" alt="image" src="https://github.com/user-attachments/assets/6c971e43-3b87-49ca-8e03-995a74a74e46" />
 
-## 📌 Clean Dataset Outcome
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/ee6eeb17-0f5e-4b88-9aad-de35e1475461" />
 
-- Valid transactions only
-- Structured data ready for **RFM score calculation**
-- Improved data reliability for analytical modeling
+[In 4]:
+
+```python
+# Check unique values of key categorical columns
+ecommerce_retail[['StockCode', 'Description', 'CustomerID', 'Country']].nunique()
+```
+
+[Out 4]:
+
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/4ca5e41a-156c-4c8e-9186-797b3d06b2b4" />
 
 ---
+
+## 📌 Summary
+
+The dataset contains **541,909 transaction records** including invoice details, product information, customer identifiers, and transaction values.
+
+Initial inspection revealed structural inconsistencies and logical anomalies that could affect revenue calculation and customer segmentation accuracy.
+
+Key concerns include:
+
+- Negative values in `Quantity` and `UnitPrice`
+- Missing `CustomerID` (~135K records)
+- Extreme outliers in transaction values
+- Duplicate records
+- Inconsistencies between product identifiers and descriptions
+
+---
+
+## ⚡ Data Quality Insights
+
+### 1️⃣ Product Code–Description Mismatch
+
+A mismatch was identified between:
+
+- **Stock Code count: 4,070**
+- **Description count: 4,223**
+
+This discrepancy suggests potential data integrity issues, such as:
+
+- Multiple descriptions assigned to the same StockCode  
+- Descriptions not properly linked to valid StockCodes  
+- Inconsistent or manually entered product names  
+- Missing or duplicated stock identifiers  
+
+This inconsistency required further validation before performing product-level or revenue analysis.
+
+---
+
+### 2️⃣ Missing Customer Identifiers
+
+Approximately **135,000 transactions** contain missing `CustomerID`.
+
+Since RFM modeling relies on customer-level aggregation, these records cannot contribute to segmentation analysis.
+
+Distribution checks show missing IDs are spread across months and countries, suggesting system or input errors rather than region-specific issues.
+
+---
+
+### 3️⃣ Logical Inconsistencies in Transaction Values
+
+Descriptive statistics revealed:
+
+- `Quantity` minimum: -80,995  
+- `UnitPrice` minimum: -11,062  
+
+Negative quantities may represent cancellations (credit notes), while others may indicate incorrect descriptions or recording errors.
+
+Negative unit prices are financially invalid and must be excluded.
+
+---
+
+### 4️⃣ Duplicate Records
+
+A total of **10,038 duplicate entries** were detected based on:
+
+`InvoiceNo`, `StockCode`, `InvoiceDate`, and `CustomerID`.
+
+These duplicates may arise from:
+
+- System duplication  
+- Split-order recording  
+- Data synchronization inconsistencies  
+
+---
+
+## ⚠ Manual Review Required
+
+To address product description inconsistencies and abnormal transactions:
+
+- Suspicious description mismatches were flagged
+- Negative quantities were validated against cancellation patterns (`InvoiceNo` starting with "C")
+- Erroneous records were marked using an `Error` indicator
+
+This ensured incorrect data was identified before removal.
+
+---
+
+## 🔎 Data Validation & Cleaning Strategy
+
+The cleaning workflow included:
+
+1. Standardizing categorical data types (`InvoiceNo`, `StockCode`, `Description`, `CustomerID`, `Country`)
+2. Converting `InvoiceDate` to datetime format
+3. Removing canceled invoices (`InvoiceNo` starting with "C")
+4. Excluding transactions with:
+   - `Quantity < 0`
+   - `UnitPrice < 0`
+   - Flagged description errors
+5. Dropping missing `CustomerID`
+6. Resolving duplicates:
+   - Removing identical duplicates
+   - Aggregating split-order quantities
+
+---
+
+## ✨ Conclusion
+
+Before conducting Exploratory Data Analysis, several structural and logical inconsistencies needed to be resolved:
+
+- Product code–description mismatches  
+- Missing customer identifiers  
+- Negative and financially invalid transactions  
+- Duplicate invoice records  
+
+After systematic validation and correction, the dataset became internally consistent and suitable for reliable revenue analysis and RFM customer segmentation.
+
+---
+
+# 4. 🔍 Exploratory Data Analysis (EDA)
+
+After completing the initial data inspection, the dataset `ecommerce_retail` was cleaned and prepared for analytical tasks.
+
+---
+
+## 🛠 Step 1. Convert to Correct Data Types
+
+To ensure proper grouping and time-based analysis, identifier columns were converted to string format and the date column was standardized.
+
+[In 5]:
+
+```python
+# Convert identifier columns to string type
+column_list = ["InvoiceNo", "StockCode", "Description", "CustomerID", "Country"]
+
+for col in column_list:
+    ecommerce_retail[col] = ecommerce_retail[col].astype(str)
+
+# Convert InvoiceDate to datetime format
+ecommerce_retail["InvoiceDate"] = pd.to_datetime(ecommerce_retail["InvoiceDate"])
+```
+
+---
+
+## 🛠 Step 2. Remove Invalid Transactions
+
+To ensure revenue accuracy, invalid records were removed using business logic rules.
+
+[In 6]:
+
+```python
+# 1. Remove canceled invoices (InvoiceNo starting with "C")
+ecommerce_retail = ecommerce_retail[
+    ~ecommerce_retail["InvoiceNo"].str.startswith("C")
+]
+
+# 2. Remove negative quantity transactions
+ecommerce_retail = ecommerce_retail[
+    ecommerce_retail["Quantity"] > 0
+]
+
+# 3. Remove negative unit prices
+ecommerce_retail = ecommerce_retail[
+    ecommerce_retail["UnitPrice"] > 0
+]
+```
+
+### Business Logic
+
+- Invoices starting with **"C"** represent cancellations (credit notes)
+- Negative quantities indicate returns or incorrect entries
+- Negative unit prices are financially invalid
+
+Only valid sales transactions were retained.
+
+---
+
+## 🛠 Step 3. Handle Missing CustomerID
+
+Customer-level analysis requires valid customer identifiers.
+
+[In 7]:
+
+```python
+import missingno as msno
+import numpy as np
+
+# Visualize missing data
+msno.matrix(ecommerce_retail)
+
+# Standardize missing formats
+ecommerce_retail["CustomerID"] = (
+    ecommerce_retail["CustomerID"]
+    .replace(["nan", "", " "], np.nan)
+)
+
+# Missing value summary
+missing_summary = pd.DataFrame({
+    "volume": ecommerce_retail.isnull().sum(),
+    "%": (ecommerce_retail.isnull().sum() / ecommerce_retail.shape[0]) * 100
+})
+
+print(missing_summary)
+```
+
+### Investigation Findings
+
+Missing `CustomerID` values were not concentrated in specific countries or time periods, suggesting general recording issues rather than systematic bias.
+
+### Final Decision
+
+Since `CustomerID` is critical for customer segmentation and RFM analysis:
+
+[In 8]
+
+```python
+ecommerce_retail = ecommerce_retail.dropna(subset=["CustomerID"])
+```
+
+All transactions without valid customer identifiers were removed.
+
+---
+
+## 🛠 Step 4. Handle Duplicate Records
+
+Duplicate rows were identified based on:
+
+- `InvoiceNo`
+- `StockCode`
+- `InvoiceDate`
+- `CustomerID`
+
+[In 9]:
+
+```python
+# Identify duplicate rows based on 'InvoiceNo', 'StockCode', 'InvoiceDate', and 'CustomerID'
+
+
+
+ecommerce_duplicate = ecommerce_retail[
+    ecommerce_retail.duplicated(
+        subset=["InvoiceNo", "StockCode", "InvoiceDate", "CustomerID"]
+    )
+]
+```
+
+If duplicates exist, they are handled in two cases:
+
+### Case 1 — Identical Duplicates
+
+- Same invoice, product, customer, date, and quantity  
+- Likely caused by system duplication  
+- ➝ Removed
+
+### Case 2 — Same Transaction but Different Quantities
+
+- Same invoice & product but recorded in separate rows  
+- Likely order split issue  
+- ➝ Quantities aggregated to maintain revenue accuracy  
+
+---
+
+## ✅ Dataset Status After EDA Preparation
+
+After:
+
+- Data type conversion  
+- Removal of canceled and invalid transactions  
+- Handling missing CustomerID  
+- Resolving duplicates  
+
+The dataset `ecommerce_retail` is now:
+
+- Financially valid  
+- Structurally consistent  
+- Customer-ready  
+- Suitable for revenue analysis and RFM modeling  
